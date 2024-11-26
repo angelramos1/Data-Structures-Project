@@ -83,5 +83,16 @@ public class Estadio {
             System.out.println(cliente);
         }
     }
+    // Metodo para iterar por la lista de clientes (Lo utilizamos para cancelar reservaciones)
+    public Cliente searchClient(String name){
+        for (Cliente cliente : reservations.keySet()){
+            if(cliente.getName().equals(name)){
+                return cliente;
+            }
+        }
+         return null;
+        
+    }
+    
 }
 
