@@ -1,3 +1,4 @@
+//Clase Estadio para administrar los asientos disponibles, las reservaciones de los clientes y la disponibilidad de asientos.
 import java.util.Set;
 import java.util.Map;
 import java.util.List;

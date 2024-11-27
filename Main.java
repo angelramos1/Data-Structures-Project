@@ -2,8 +2,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Welcome to the Baseball Reservation System!"); //mensaje de bienvenida
+        //Mensaje de bienvenida.
+        System.out.println("Welcome to the Baseball Reservation System!"); 
 
+        //Opciones para el operador.
         System.out.println("-----MENU------ ");
         System.out.println("1. New reservation.");
         System.out.println("2. Check a reservation.");        
@@ -68,5 +70,3 @@ public class Main {
     }
     }
 }
-
-
