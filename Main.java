@@ -32,9 +32,9 @@ public class Main {
             Cliente cliente = new Cliente(nombre, email, telefono);
 
             System.out.print("Select a Section: ");
-            System.out.print("\n1. Field Level");
-            System.out.print("\n2. Main Level");
-            System.out.print("\n3. Grandstand Level");
+            System.out.print("\n1. Field Level Cost: $300");
+            System.out.print("\n2. Main Level Cost: $120");
+            System.out.print("\n3. Grandstand Level Cost: $45");
             System.out.print("\nEnter the section: ");
             String sectionScanned = sectionScanner.nextLine();
             estadio.reserveSeats(cliente, sectionScanned, option);
