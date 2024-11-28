@@ -38,13 +38,15 @@ public class Main {
             Cliente cliente = new Cliente(nombre, email, telefono);
         
 
-            System.out.print("Select Section(1 | 2 | 3): ");
+            System.out.print("Sections and prices: ");
             System.out.print("\n1. Field Level --------($300)");
             System.out.print("\n2. Main Level -------($120)");
             System.out.print("\n3. Grandstand Level --($45)");
+            System.out.print("\nSelect a section (1 | 2 | 3): ");
             String section;
             int price;
             int sectionScanned = sectionScanner.nextInt();
+            //Switch para conectar la seccion y los precios.(luego cacularlos con totalCost)
             switch(sectionScanned){
                 case 1 ->{
                     section = "Field Level";
@@ -64,7 +66,7 @@ public class Main {
                 }
             }
 
-            
+            //Seleccion de asientos y muestra costo y confirmacion de reservacion.
             System.out.print("\n Enter number of seats: ");
             int quantity = quantityScanner.nextInt();
             boolean success = estadio.reserveSeats(cliente, section, quantity);
@@ -73,8 +75,8 @@ public class Main {
                 int totalCost = price * quantity;
                 System.out.println("\nThe total cost of the reservation is: $" + totalCost);
             } else {
-                // Add to waitlist if no seats available
-                estadio.addToWaitList(cliente);
+                // Agrega al waitlist al cliente.
+                estadio.addToWaitList(cliente,section,quantity);
                 System.out.println("No available seats in " + sectionScanned + ". " +
                                    cliente.getName() + " has been added to the waitlist.");
             }
@@ -115,6 +117,7 @@ public class Main {
         default -> 
         System.out.println("Invalid option.");
     }
+    //Para dar la opcion de volver al menu o undo.
         if (menu) {
         System.out.println("\nWould you like to:");
         System.out.println("1. Return to the menu.");

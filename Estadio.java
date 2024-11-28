@@ -50,7 +50,7 @@ public class Estadio {
             actionHistory.push(new Action("Reserved",cliente,bookedSeats));
             return true;
         } else {
-            waitlist.add(cliente);
+            addToWaitList(cliente,level,quantity);
             return false;
         }
     }
@@ -63,6 +63,46 @@ public class Estadio {
                 availableSeats.add(seat);
             }
             actionHistory.push(new Action("Canceled",cliente,canceledSeats));
+            if (!waitlist.isEmpty()) {
+                Queue<Cliente> remainingWaitlist = new LinkedList<>();
+                boolean seatsReassigned = false;
+    
+                for (Cliente nextClient : waitlist) {
+                    String desiredSection = nextClient.getTargetSection();
+                    int desiredQuantity = nextClient.getTargetQuantity();
+    
+                    // verifica si los asientos liberados cumplen con los requisitos del cliente
+                    List<Asiento> reassignedSeats = new ArrayList<>();
+                    for (Asiento seat : canceledSeats) {
+                        if (seat.getLevel().equals(desiredSection) && reassignedSeats.size() < desiredQuantity) {
+                            seat.setReserved(true);
+                            reassignedSeats.add(seat);
+                        }
+                    }
+    
+                    if (reassignedSeats.size() == desiredQuantity) {
+                        // Quitar los asientos asignados
+                        canceledSeats.removeAll(reassignedSeats); 
+                        availableSeats.removeAll(reassignedSeats);
+                        reservations.put(nextClient, reassignedSeats);
+                        actionHistory.push(new Action("Reserved", nextClient, reassignedSeats));
+                        System.out.println("Assigned " + desiredQuantity + " seats in " + desiredSection + 
+                                           " to " + nextClient.getName() + " from the waitlist.");
+                        seatsReassigned = true;
+                    } else {
+                        // Cliente se quedan en la lista de espera.
+                        remainingWaitlist.add(nextClient); 
+                    }
+                }
+    
+                waitlist.clear();
+                // Se agregaron los clientes no asignados a la lista de espera de nuevo.
+                waitlist.addAll(remainingWaitlist); 
+    
+                if (!seatsReassigned) {
+                    System.out.println("No clients in the waitlist matched the available seats.");
+                }
+            }
             return true;
         }
         return false;
@@ -85,8 +125,16 @@ public class Estadio {
         }
     }
     
-    public void addToWaitList(Cliente cliente){
-        waitlist.add(cliente);
+    public void addToWaitList(Cliente cliente,String section,int quantity){
+        if(!waitlist.contains(cliente)){
+            cliente.setTargetSection(section);
+            cliente.setTargetQuantity(quantity);
+            waitlist.add(cliente);
+        }
+        else{
+            System.out.println(cliente.getName() + " is on the wait list.");
+        }
+        
     }
 
     // Metodo para iterar por la lista de clientes (Lo utilizamos para cancelar reservaciones)
@@ -99,39 +147,40 @@ public class Estadio {
          return null;
         
     }
-
+    // Metodo para borrar la ultima accion.
     public boolean Undo(){
         if (actionHistory.isEmpty()) {
             System.out.println("No actions to undo.");
             return false;
         }
     
-        Action lastAction = actionHistory.pop(); // Get the last action
+        Action lastAction = actionHistory.pop();
         Cliente cliente = lastAction.getCliente();
         List<Asiento> affectedSeats = lastAction.getTargetSeats();
     
         if (lastAction.getActionType().equals("Reserved")) {
-            // Undo reservation
             for (Asiento seat : affectedSeats) {
                 seat.setReserved(false);
                 availableSeats.add(seat);
             }
-            reservations.remove(cliente); // Remove client from reservations
+            // Quita los clientes de su reservacion
+            reservations.remove(cliente); 
             System.out.println("Reservation for " + cliente.getName() + " has been undone.");
     
-            // Assign seats to next client in the waitlist
+            // Agrega los asientos al cliente en la lista de espera
             if (!waitlist.isEmpty()) {
                 Cliente nextClient = waitlist.poll();
                 reserveSeats(nextClient, affectedSeats.get(0).getLevel(), affectedSeats.size());
                 System.out.println("Seats reassigned to the next client in waitlist: " + nextClient.getName());
             }
         } else if (lastAction.getActionType().equals("Canceled")) {
-            // Undo cancellation
+            // Deshace la cancelacion de reserva.
             for (Asiento seat : affectedSeats) {
                 seat.setReserved(true);
                 availableSeats.remove(seat);
             }
-            reservations.put(cliente, affectedSeats); // Restore reservation
+            //Devuelve la reservacion borrada.
+            reservations.put(cliente, affectedSeats); 
             System.out.println("Cancellation for " + cliente.getName() + " has been undone.");
         }
         return true;
