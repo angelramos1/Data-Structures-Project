@@ -42,6 +42,6 @@ public void setTargetQuantity(int quantity) {
 }
 //Método para devolver en un string la información del cliente.
     public String toString() {
-        return "Name: " + name + ", Email: " + email + ", Phone: " + phoneNumber + ", Target Section: " + targetSection + ", Target Quantity: " + targetQuantity;
+        return "Name: "+ name + ", Email: " + email + ", Phone: " +phoneNumber + ", Target Section: " +targetSection + ", Target Quantity: " + targetQuantity;
     }
 }

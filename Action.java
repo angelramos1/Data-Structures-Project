@@ -1,9 +1,9 @@
 import java.util.List;
-
+// Clase para los métodos de Undo, para que se haga más fácil manejar las acciones y los clientes haciendolas.
 public class Action {
-        private String actionType; // Reserved or Canceled
-        private Cliente cliente;   // Client associated with the action
-        private List<Asiento> targetSeats; // Seats involved in the action
+        private String actionType; 
+        private Cliente cliente;   
+        private List<Asiento> targetSeats;
     
         public Action(String actionType, Cliente cliente, List<Asiento> targetSeats) {
             this.actionType = actionType;

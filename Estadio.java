@@ -29,24 +29,24 @@ public class Estadio {
     }
     //se inicializan los asientos en el nivel específico
     private void initializeSeats(String level, int capacity) {
-        for (int i = 1; i <= capacity; i++) {
+        for (int i =1;i<=capacity;i++) {
             availableSeats.add(new Asiento(level, String.valueOf(i)));
         }
     }
     // método para reservar una cantidad de asientos para un cliente en cierto nivel
     public boolean reserveSeats(Cliente cliente, String level, int quantity) {
-        List<Asiento> bookedSeats = new ArrayList<>();
-        for (Asiento seat : availableSeats) {
+        List<Asiento> bookedSeats=new ArrayList<>();
+        for (Asiento seat:availableSeats) {
             if (seat.getLevel().equals(level) && !seat.isReserved()) {
                 seat.setReserved(true);
                 bookedSeats.add(seat);
-                if (bookedSeats.size() == quantity) break;
+                if (bookedSeats.size()==quantity) break;
             }
         }
 
-        if (bookedSeats.size() == quantity) {
+        if (bookedSeats.size()== quantity) {
             availableSeats.removeAll(bookedSeats);
-            reservations.put(cliente, bookedSeats);
+            reservations.put(cliente,bookedSeats);
             actionHistory.push(new Action("Reserved",cliente,bookedSeats));
             return true;
         } else {
@@ -57,30 +57,30 @@ public class Estadio {
     // para cancelar reservaciones y liberar esos asientos
     public boolean cancelReservation(Cliente cliente) {
         if (reservations.containsKey(cliente)) {
-            List<Asiento> canceledSeats = reservations.remove(cliente);
-            for (Asiento seat : canceledSeats) {
+            List<Asiento> canceledSeats =reservations.remove(cliente);
+            for (Asiento seat:canceledSeats) {
                 seat.setReserved(false);
                 availableSeats.add(seat);
             }
             actionHistory.push(new Action("Canceled",cliente,canceledSeats));
             if (!waitlist.isEmpty()) {
-                Queue<Cliente> remainingWaitlist = new LinkedList<>();
-                boolean seatsReassigned = false;
+                Queue<Cliente> remainingWaitlist= new LinkedList<>();
+                boolean seatsReassigned= false;
     
-                for (Cliente nextClient : waitlist) {
-                    String desiredSection = nextClient.getTargetSection();
-                    int desiredQuantity = nextClient.getTargetQuantity();
+                for (Cliente nextClient:waitlist) {
+                    String desiredSection =nextClient.getTargetSection();
+                    int desiredQuantity= nextClient.getTargetQuantity();
     
                     // verifica si los asientos liberados cumplen con los requisitos del cliente
                     List<Asiento> reassignedSeats = new ArrayList<>();
-                    for (Asiento seat : canceledSeats) {
+                    for (Asiento seat:canceledSeats) {
                         if (seat.getLevel().equals(desiredSection) && reassignedSeats.size() < desiredQuantity) {
                             seat.setReserved(true);
                             reassignedSeats.add(seat);
                         }
                     }
     
-                    if (reassignedSeats.size() == desiredQuantity) {
+                    if (reassignedSeats.size()==desiredQuantity) {
                         // Quitar los asientos asignados
                         canceledSeats.removeAll(reassignedSeats); 
                         availableSeats.removeAll(reassignedSeats);
@@ -132,14 +132,14 @@ public class Estadio {
             waitlist.add(cliente);
         }
         else{
-            System.out.println(cliente.getName() + " is on the wait list.");
+            System.out.println(cliente.getName()+ " is on the wait list.");
         }
         
     }
 
     // Metodo para iterar por la lista de clientes (Lo utilizamos para cancelar reservaciones)
     public Cliente searchClient(String name){
-        for (Cliente cliente : reservations.keySet()){
+        for (Cliente cliente:reservations.keySet()){
             if(cliente.getName().equals(name)){
                 return cliente;
             }
@@ -154,12 +154,12 @@ public class Estadio {
             return false;
         }
     
-        Action lastAction = actionHistory.pop();
-        Cliente cliente = lastAction.getCliente();
+        Action lastAction =actionHistory.pop();
+        Cliente cliente= lastAction.getCliente();
         List<Asiento> affectedSeats = lastAction.getTargetSeats();
     
         if (lastAction.getActionType().equals("Reserved")) {
-            for (Asiento seat : affectedSeats) {
+            for (Asiento seat:affectedSeats) {
                 seat.setReserved(false);
                 availableSeats.add(seat);
             }
@@ -175,13 +175,13 @@ public class Estadio {
             }
         } else if (lastAction.getActionType().equals("Canceled")) {
             // Deshace la cancelacion de reserva.
-            for (Asiento seat : affectedSeats) {
+            for (Asiento seat:affectedSeats) {
                 seat.setReserved(true);
                 availableSeats.remove(seat);
             }
             //Devuelve la reservacion borrada.
             reservations.put(cliente, affectedSeats); 
-            System.out.println("Cancellation for " + cliente.getName() + " has been undone.");
+            System.out.println("Cancellation for "+ cliente.getName() + " has been undone.");
         }
         return true;
     
