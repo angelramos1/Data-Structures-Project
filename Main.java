@@ -36,19 +36,42 @@ public class Main {
             System.out.print("\nPhone number: ");
             String telefono = optionScanner.nextLine();
             Cliente cliente = new Cliente(nombre, email, telefono);
+        
 
-            System.out.print("Select a Section: ");
+            System.out.print("Select Section(1 | 2 | 3): ");
             System.out.print("\n1. Field Level --------($300)");
             System.out.print("\n2. Main Level -------($120)");
             System.out.print("\n3. Grandstand Level --($45)");
+            String section;
+            int price;
+            int sectionScanned = sectionScanner.nextInt();
+            switch(sectionScanned){
+                case 1 ->{
+                    section = "Field Level";
+                    price = 300;
+                }
+                case 2->{
+                    section = "Main Level";
+                    price = 120;
+                }
+                case 3->{
+                    section = "Grandstand Level";
+                    price = 45;
+                }
+                default ->{
+                    System.out.println("Invalid section. (Section does not exist).");
+                    continue;
+                }
+            }
 
-            System.out.print("\nEnter the section: ");
-            String sectionScanned = sectionScanner.nextLine();
+            
             System.out.print("\n Enter number of seats: ");
             int quantity = quantityScanner.nextInt();
-            boolean success = estadio.reserveSeats(cliente, sectionScanned, quantity);
+            boolean success = estadio.reserveSeats(cliente, section, quantity);
             if (success) {
-                System.out.println("Reservation has been made for " + cliente.getName() + ", " + quantity + " seats in " + sectionScanned + ".");
+                System.out.println("Reservation has been made for " + cliente.getName() + ", " + quantity + " seats in " + section + ".");
+                int totalCost = price * quantity;
+                System.out.println("\nThe total cost of the reservation is: $" + totalCost);
             } else {
                 // Add to waitlist if no seats available
                 estadio.addToWaitList(cliente);
